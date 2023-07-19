@@ -17,9 +17,9 @@ logger = logging.getLogger(__name__)
 bot = telebot.TeleBot(BOT_TOKEN)
 
 
-@bot.message_handler(commands=['help', 'start'])
-def help(message):
-    help_message = """
+@bot.message_handler(commands=['start'])
+def start(message):
+    start_message = """
 Welcome to Links Shorter🔗🤖! Send /help for commands.
 Available commands:
 /shorten - Shorten a long URL  
@@ -29,7 +29,7 @@ Available commands:
 /update - Update a link
     """
 
-    bot.reply_to(message, help_message)
+    bot.reply_to(message, start_message)
 
 
 @bot.message_handler(commands=['shorten'])
