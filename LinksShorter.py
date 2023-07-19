@@ -1,9 +1,9 @@
 import telebot
+from telebot import types
 import requests
 import logging
 import time
-import os
-from dotenv import load_dotenv
+from urllib.parse import urlparse
 
 load_dotenv()
 
