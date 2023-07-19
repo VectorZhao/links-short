@@ -30,7 +30,7 @@ bot.set_my_commands([start_command, shorten_command, del_command, stat_command, 
 @bot.message_handler(commands=['start'])
 def start(message):
     start_message = """
-Welcome to 1uu.me bot! Send /help for commands.
+Welcome to Links Shorter⛓️🤖! Send /help for commands.
 Available commands:
 /shorten - Shorten a long URL
 /delete - Delete a shortened URL
@@ -51,10 +51,10 @@ def process_url_step(message):
     try:
       result = urlparse(url)
       if not all([result.scheme, result.netloc]):
-        bot.reply_to(message, 'URL 格式不正确')
+        bot.reply_to(message, 'URL format is incorrect❗️')
         return
     except:
-      bot.reply_to(message, 'URL 解析错误')
+      bot.reply_to(message, 'URL parsing error❗️')
       return
     msg = bot.reply_to(message, 'Now send me the custom URL you want (e.g. myurl):') 
     bot.register_next_step_handler(msg, process_custom_url_step, url)
@@ -71,9 +71,9 @@ def process_custom_url_step(message, url):
     response = requests.post(f'{API_URL}/links', headers=headers, json=data)
     if response.status_code not in [200, 201]:
       logger.error('请求失败,状态码%s', response.status_code)  
-      bot.reply_to(message, '缩短链接失败,请重试')
+      bot.reply_to(message, 'URL shortening failed, please try again❗️')
       return
-    logger.debug('%s 短链接生成成功', time.asctime())
+    logger.debug('%s Shorten URL successfully✅', time.asctime())
     link = response.json()['link']
     shortened_url_msg = f'Shortened URL: `{link}`'
     bot.send_message(chat_id=message.chat.id, text=shortened_url_msg, parse_mode='Markdown')
@@ -92,11 +92,11 @@ def process_delete_step(message):
     response = requests.delete(f'{API_URL}/links/{link_id}', headers=headers)
     if response.status_code != 200:
       logger.error('删除链接失败,状态码%s', response.status_code)
-      bot.reply_to(message, '链接删除失败,请重试')
+      bot.reply_to(message, 'URL deletion failed, please try again❗️')
       return
 
     logger.debug('%s 链接删除成功', time.asctime())
-    bot.reply_to(message, '链接已删除!')
+    bot.reply_to(message, 'URL has been deleted✅')
 
 @bot.message_handler(commands=['stats'])
 def stats(message):
@@ -112,7 +112,7 @@ def process_stats_step(message):
     response = requests.get(f'{API_URL}/links/{link_id}/stats', headers=headers)
     if response.status_code != 200:
       logger.error('请求失败,状态码%s', response.status_code)
-      bot.reply_to(message, '请求失败,请重试')
+      bot.reply_to(message, 'Request failed, please try again❗️')
       return
     logger.debug('%s 统计数据获取成功', time.asctime())
     data = response.json()
@@ -203,7 +203,7 @@ def process_update_address_step(message, link_id, url):
     msg = f'链接更新成功! 新链接: `{new_link}`'
     bot.send_message(chat_id=message.chat.id, text=msg, parse_mode='Markdown')
   else:
-    bot.reply_to(message, '链接更新失败!')
+    bot.reply_to(message, 'URL update failed❗️')
 
 @bot.message_handler(func=lambda message: True) 
 def handle_all_messages(message):
@@ -213,10 +213,10 @@ def handle_all_messages(message):
     try:
       result = urlparse(message.text)
       if not all([result.scheme, result.netloc]):
-        bot.reply_to(message, 'URL 格式不正确')
+        bot.reply_to(message, 'URL format is incorrect❗️')
         return
     except:
-      bot.reply_to(message, 'URL 解析错误')
+      bot.reply_to(message, 'URL parsing error❗️')
       return
 
     shorten_url(message, message.text)
@@ -230,7 +230,7 @@ def shorten_url(message, url):
     response = requests.post(f'{API_URL}/links', headers=headers, json=data)
     if response.status_code not in [200, 201]:
       logger.error('请求失败,状态码%s', response.status_code)  
-      bot.reply_to(message, '缩短链接失败,请重试')
+      bot.reply_to(message, 'URL shortening failed, please try again❗️')
       return
     logger.debug('%s 短链接生成成功', time.asctime())
     link = response.json()['link']
