@@ -2,9 +2,12 @@ version: '3'
 
 services:
 
-  links-shorter:
-
-    image: vectorzhao/links-shorter:latest
-    container_name: links-shorter
+  app:
+    image: vectorzhao/links-shorter-tgbot:latest
+    container_name: links-shorter-tgbot
     env_file:
       - .env
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
