@@ -12,6 +12,7 @@ load_dotenv()
 API_URL = os.getenv('API_URL')
 API_KEY = os.getenv('API_KEY')
 BOT_TOKEN = os.getenv('BOT_TOKEN')
+AUTH_USERS = os.getenv('AUTH_USERS')
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -26,9 +27,15 @@ list_command = types.BotCommand("/list", "List all links")
 update_command = types.BotCommand("/update", "Update a link")
 
 bot.set_my_commands([start_command, shorten_command, del_command, stat_command, list_command, update_command])
-
+def authorized_check(message):
+    if message.from_user.id not in AUTH_USERS:
+        bot.reply_to(message, 'You are not authorized to use this bot')
+        return False
+    return True
 @bot.message_handler(commands=['start'])
 def start(message):
+    if not authorized_check(message):
+        return
     start_message = """
 Welcome to Links Shorter(🌐olft.link🌐)! Send /help for commands.
 Available commands:
@@ -43,6 +50,8 @@ Available commands:
 
 @bot.message_handler(commands=['shorten'])
 def shorten(message):
+    if not authorized_check(message):
+        return
     msg = bot.reply_to(message, 'Send me the long URL to shorten:')
     bot.register_next_step_handler(msg, process_url_step)
 
@@ -80,6 +89,8 @@ def process_custom_url_step(message, url):
 
 @bot.message_handler(commands=['delete'])
 def delete(message):
+    if not authorized_check(message):
+        return
     msg = bot.reply_to(message, 'Send me the shortened URL ID to delete:')
     bot.register_next_step_handler(msg, process_delete_step)
 
@@ -100,6 +111,8 @@ def process_delete_step(message):
 
 @bot.message_handler(commands=['stats'])
 def stats(message):
+    if not authorized_check(message):
+        return
     msg = bot.reply_to(message, 'Send me the shortened URL ID to get stats:')
     bot.register_next_step_handler(msg, process_stats_step)
 
@@ -149,6 +162,8 @@ Updated At: {data['updated_at']}
 
 @bot.message_handler(commands=['list'])
 def list_links(message):
+  if not authorized_check(message):
+        return
   links = []
   limit = 10
   skip = 0
@@ -175,6 +190,8 @@ def list_links(message):
 
 @bot.message_handler(commands=['update'])
 def update(message):
+  if not authorized_check(message):
+      return
   msg = bot.reply_to(message, 'Send me the link ID to update:')
   bot.register_next_step_handler(msg, process_update_step)
 
@@ -207,6 +224,8 @@ def process_update_address_step(message, link_id, url):
 
 @bot.message_handler(func=lambda message: True) 
 def handle_all_messages(message):
+    if not authorized_check(message):
+        return
     if message.text.startswith('/'): 
       return
 
