@@ -12,7 +12,7 @@ load_dotenv()
 API_URL = os.getenv('API_URL')
 API_KEY = os.getenv('API_KEY')
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-AUTH_USERS = os.getenv('AUTH_USERS')
+AUTH_USERS = int(os.getenv('AUTH_USERS'))
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
