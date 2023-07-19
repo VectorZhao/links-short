@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+
+  links-shorter:
+
+    image: vectorzhao/links-shorter:latest
+    container_name: links-shorter
+    env_file:
+      - .env
