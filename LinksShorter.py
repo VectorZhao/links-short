@@ -30,7 +30,7 @@ bot.set_my_commands([start_command, shorten_command, del_command, stat_command, 
 @bot.message_handler(commands=['start'])
 def start(message):
     start_message = """
-Welcome to Links Shorter⛓️🤖! Send /help for commands.
+Welcome to Links Shorter(🌐olft.link🌐)! Send /help for commands.
 Available commands:
 /shorten - Shorten a long URL
 /delete - Delete a shortened URL
