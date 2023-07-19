@@ -12,7 +12,7 @@ load_dotenv()
 API_URL = os.getenv('API_URL')
 API_KEY = os.getenv('API_KEY')
 BOT_TOKEN = os.getenv('BOT_TOKEN')
-AUTH_USERS = int(os.getenv('AUTH_USERS'))
+AUTH_USERS = os.getenv('AUTH_USERS')
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -28,7 +28,12 @@ update_command = types.BotCommand("/update", "Update a link")
 
 bot.set_my_commands([start_command, shorten_command, del_command, stat_command, list_command, update_command])
 def authorized_check(message):
-    if message.from_user.id not in AUTH_USERS:
+    user_id = int(message.from_user.id)
+    if isinstance(AUTH_USERS, int):
+        auth_users = [int(AUTH_USERS)]
+    elif isinstance(AUTH_USERS, str):
+        auth_users = [int(x) for x in AUTH_USERS.split(",")]
+    if user_id not in auth_users:
         bot.reply_to(message, 'You are not authorized to use this bot')
         return False
     return True
