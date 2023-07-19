@@ -3,6 +3,7 @@ from telebot import types
 import requests
 import logging
 import time
+import os
 from urllib.parse import urlparse
 from dotenv import load_dotenv
 
@@ -29,7 +30,7 @@ bot.set_my_commands([start_command, shorten_command, del_command, stat_command, 
 @bot.message_handler(commands=['start'])
 def start(message):
     start_message = """
-Welcome to Links Shorter bot! Send /help for commands.
+Welcome to 1uu.me bot! Send /help for commands.
 Available commands:
 /shorten - Shorten a long URL
 /delete - Delete a shortened URL
@@ -43,9 +44,9 @@ Available commands:
 @bot.message_handler(commands=['shorten'])
 def shorten(message):
     msg = bot.reply_to(message, 'Send me the long URL to shorten:')
-    bot.register_next_step_handler(msg, process_shorten_step)
+    bot.register_next_step_handler(msg, process_url_step)
 
-def process_shorten_step(message):
+def process_url_step(message):
     url = message.text
     try:
       result = urlparse(url)
@@ -55,9 +56,17 @@ def process_shorten_step(message):
     except:
       bot.reply_to(message, 'URL 解析错误')
       return
+    msg = bot.reply_to(message, 'Now send me the custom URL you want (e.g. myurl):') 
+    bot.register_next_step_handler(msg, process_custom_url_step, url)
+
+def process_custom_url_step(message, url):
+    custom_url = message.text
 
     headers = {'X-API-KEY': API_KEY}
-    data = {'target': url}
+    data = {
+    'target': url, 
+    'customurl': custom_url
+    }
 
     response = requests.post(f'{API_URL}/links', headers=headers, json=data)
     if response.status_code not in [200, 201]:
@@ -195,6 +204,38 @@ def process_update_address_step(message, link_id, url):
     bot.send_message(chat_id=message.chat.id, text=msg, parse_mode='Markdown')
   else:
     bot.reply_to(message, '链接更新失败!')
+
+@bot.message_handler(func=lambda message: True) 
+def handle_all_messages(message):
+    if message.text.startswith('/'): 
+      return
+
+    try:
+      result = urlparse(message.text)
+      if not all([result.scheme, result.netloc]):
+        bot.reply_to(message, 'URL 格式不正确')
+        return
+    except:
+      bot.reply_to(message, 'URL 解析错误')
+      return
+
+    shorten_url(message, message.text)
+
+def shorten_url(message, url):
+    headers = {'X-API-KEY': API_KEY}
+    data = {
+      'target': url, 
+    }
+
+    response = requests.post(f'{API_URL}/links', headers=headers, json=data)
+    if response.status_code not in [200, 201]:
+      logger.error('请求失败,状态码%s', response.status_code)  
+      bot.reply_to(message, '缩短链接失败,请重试')
+      return
+    logger.debug('%s 短链接生成成功', time.asctime())
+    link = response.json()['link']
+    shortened_url_msg = f'Shortened URL: `{link}`'
+    bot.send_message(chat_id=message.chat.id, text=shortened_url_msg, parse_mode='Markdown')
 
 if __name__ == '__main__':
     logger.debug('%s bot started', time.asctime())
