@@ -42,7 +42,7 @@ def start(message):
     if not authorized_check(message):
         return
     start_message = """
-Welcome to Links Shorter(🌐olft.link🌐)! Send /help for commands.
+Welcome to Links Shorter! Home page: olft.link.
 Available commands:
 /shorten - Shorten a long URL
 /delete - Delete a shortened URL
