@@ -24,7 +24,7 @@ jobs:
             BOT_TOKEN
             AUTH_USERS
         env:
-          API_URL: ${{ secrets.API_URL }}
-          API_KEY: ${{ secrets.API_KEY }}
-          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
-          AUTH_USERS: ${{ secrets.AUTH_USERS }}
+            API_URL: ${{ secrets.API_URL }}
+            API_KEY: ${{ secrets.API_KEY }}
+            BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+            AUTH_USERS: ${{ secrets.AUTH_USERS }}
